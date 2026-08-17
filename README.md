@@ -1,10 +1,10 @@
-# planetgen
+# 2D Planet Generator
 
 **English** · [简体中文](README.zh-CN.md)
 
-A small, headless, JSON-driven procedural planet generator. It creates reusable
-heightmap data, then renders that data as a flat map, a shaded globe, or a
-seamlessly looping spin animation.
+A small, headless, JSON-driven procedural planet generator. The `planetgen` CLI
+creates reusable heightmap data, then renders that data as a flat map, a shaded
+globe, or a seamlessly looping spin animation.
 
 <p align="center">
   <img src="gallery/gallery_spin.gif" alt="Eight procedurally generated planets rotating" width="750">
@@ -37,8 +37,8 @@ planet.json + render config (JSON) ── render ──┴──▶ PNG / GIF
 Requires Python 3.10 or newer.
 
 ```bash
-git clone https://github.com/clingsz/planetgen.git
-cd planetgen
+git clone https://github.com/clingsz/2d-planet-generator.git
+cd 2d-planet-generator
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -204,3 +204,7 @@ Add a palette by defining another gradient in `colormaps.py`.
   sphere.
 - The terrain uses fractal noise only; there is no dedicated crater generator
   yet.
+
+## License
+
+Released under the [MIT License](LICENSE).

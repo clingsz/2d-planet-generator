@@ -1,9 +1,9 @@
-# planetgen
+# 2D Planet Generator
 
 [English](README.md) · **简体中文**
 
-一个轻量、无界面、由 JSON 驱动的程序化星球生成器。它先生成可复用的高度图数据，
-再把同一份数据渲染成平面地图、带光照的球体，或无缝循环的自转 GIF。
+一个轻量、无界面、由 JSON 驱动的程序化星球生成器。`planetgen` 命令行工具先生成
+可复用的高度图数据，再把同一份数据渲染成平面地图、带光照的球体，或无缝循环的自转 GIF。
 
 <p align="center">
   <img src="gallery/gallery_spin.gif" alt="八种程序化生成的自转星球" width="750">
@@ -34,8 +34,8 @@ planet.json + 显示配置 (JSON) ── render ─┴──▶ PNG / GIF
 需要 Python 3.10 或更高版本。
 
 ```bash
-git clone https://github.com/clingsz/planetgen.git
-cd planetgen
+git clone https://github.com/clingsz/2d-planet-generator.git
+cd 2d-planet-generator
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -196,3 +196,7 @@ toxic, redstone, ocean, pandora, icy, dessert, tempest, hive, grayscale
 - 经度方向已经无缝，但两极仍可能出现挤压；原因是源噪声采样自等距柱状地图，而不是
   直接在球面采样。
 - 当前地形只使用分形噪声，还没有专门的陨石坑生成器。
+
+## 开源许可证
+
+本项目采用 [MIT License](LICENSE) 开源。
