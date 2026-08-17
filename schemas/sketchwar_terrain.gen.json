@@ -1,0 +1,20 @@
+{
+  "name": "sketchwar_terrain",
+  "size": [192, 48],
+  "seed": 7,
+  "noise": {
+    "scale": 34.0,
+    "octaves": 5,
+    "persistence": 0.46,
+    "lacunarity": 2.05,
+    "offset": [0, 0],
+    "wrap_x": true
+  },
+  "shaping": {
+    "normalize_mode": "local",
+    "flood": 0.0,
+    "falloff": false,
+    "elevate_horizontal": null,
+    "elevate_vertical": null
+  }
+}

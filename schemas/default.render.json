@@ -1,0 +1,8 @@
+{
+  "colormap": "terrain",
+  "projection": "sphere",
+  "radius": 256,
+  "rotation": 0.0,
+  "shading": true,
+  "background": [0, 0, 0, 0]
+}

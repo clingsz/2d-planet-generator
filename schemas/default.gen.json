@@ -1,0 +1,19 @@
+{
+  "name": "default",
+  "size": [240, 120],
+  "seed": 7,
+  "noise": {
+    "scale": 26.0,
+    "octaves": 6,
+    "persistence": 0.5,
+    "lacunarity": 2.1,
+    "offset": [0, 0]
+  },
+  "shaping": {
+    "normalize_mode": "global",
+    "flood": 0.0,
+    "falloff": false,
+    "elevate_horizontal": null,
+    "elevate_vertical": null
+  }
+}
