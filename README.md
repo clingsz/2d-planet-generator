@@ -1,38 +1,70 @@
-# 2D Planet Generator
+<p align="center">
+  <img src="gallery/hero.png" alt="A family of procedurally generated 2D planets" width="100%">
+</p>
 
-**English** · [简体中文](README.zh-CN.md)
-
-A small, headless, JSON-driven procedural planet generator. The `planetgen` CLI
-creates reusable heightmap data, then renders that data as a flat map, a shaded
-globe, or a seamlessly looping spin animation.
+<h1 align="center">2D Planet Generator</h1>
 
 <p align="center">
-  <img src="gallery/gallery_spin.gif" alt="Eight procedurally generated planets rotating" width="750">
+  <strong>One seed → heightmap, world map, shaded globe, and looping GIF.</strong><br>
+  A tiny, headless planet factory for games, prototypes, art pipelines, and procedural-world experiments.
 </p>
 
 <p align="center">
-  <img src="gallery/spin_earth.gif" alt="A procedurally generated Earth-like planet rotating" width="300">
+  <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7c3aed" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/runtime-headless-0891b2" alt="Headless runtime">
 </p>
 
-## Why planetgen?
+## Turn a JSON recipe into a world
 
-- **Data and presentation are separate.** Generate a heightmap once, then try
-  different palettes, projections, lighting, and rotations without regenerating
-  the terrain.
-- **Deterministic output.** The same JSON schema and seed produce the same world.
-- **No graphics runtime.** It runs headlessly with only NumPy and Pillow.
-- **Seamless longitude.** Wrapped noise removes the visible seam when a map is
-  projected onto a rotating sphere.
-- **17 named palettes.** Create Earth-like, ocean, lava, moon, icy, toxic, and
-  other worlds from the same terrain data.
+Use 2D Planet Generator when you need **repeatable planet assets without an
+editor, game engine, or graphics runtime**. Describe terrain in JSON, choose a
+seed, and render the result as reusable data or finished art.
 
-```text
-generation schema (JSON) ── generate ──▶ planet.json (heightmap)
-                                               │
-planet.json + render config (JSON) ── render ──┴──▶ PNG / GIF
+```bash
+python main.py all \
+  --schema schemas/default.gen.json \
+  --config schemas/default.render.json \
+  --out-data planet.json \
+  --out-png planet.png
 ```
 
-## Quick start
+The same `planet.json` can be rendered again with another palette, projection,
+size, light, or rotation. Generation and presentation stay separate.
+
+## Who is this for?
+
+| You are… | You need… | planetgen gives you… |
+| --- | --- | --- |
+| An indie game developer | Planets for a world map, level select, card, or background | Deterministic PNG globes and looping GIFs |
+| A procedural-generation tinkerer | Fast terrain experiments without engine setup | Seeded Perlin heightmaps controlled by JSON |
+| A 2D or pixel artist | A strong base to paint over or recolor | Flat maps, shaded spheres, and 17 palettes |
+| A tools or pipeline developer | Batch-friendly assets for scripts, servers, or CI | A headless CLI with only NumPy and Pillow |
+| A teacher or learner | A compact example of noise → data → projection | Small, readable Python modules with no noise library |
+
+Use something else if you need physically accurate spherical simulation,
+interactive editing, cloud or atmosphere rendering, biomes, or real crater
+placement. This project is intentionally a small terrain-and-rendering tool.
+
+## What can it make?
+
+<p align="center">
+  <img src="gallery/gallery_spin.gif" alt="Eight generated planet styles rotating" width="750">
+</p>
+
+- A display-agnostic JSON heightmap for your own renderer or game.
+- A longitude-seamless 2:1 flat world map.
+- A transparent or solid-background shaded globe.
+- A seamless, endlessly looping rotation GIF.
+- Earth, ocean, lava, moon, icy, toxic, alien, and other looks from the same
+  terrain.
+
+<p align="center">
+  <img src="gallery/spin_earth.gif" alt="Generated Earth-like planet rotating" width="300">
+</p>
+
+## Start in 30 seconds
 
 Requires Python 3.10 or newer.
 
@@ -43,19 +75,61 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
+# Generate terrain data and a shaded globe.
 python main.py all \
   --schema schemas/default.gen.json \
   --config schemas/default.render.json \
   --out-data planet.json \
   --out-png planet.png
+
+# Turn the same terrain into a six-second looping animation.
+python main.py gif \
+  --data planet.json \
+  --config schemas/default.render.json \
+  --out planet.gif \
+  --frames 72 \
+  --fps 12
 ```
 
-This writes the reusable terrain data to `planet.json` and the rendered globe to
-`planet.png`.
+Both `--schema` and `--config` are optional. Omit them to use the built-in
+defaults.
 
-## Commands
+## Pick your outcome
 
-Generate terrain data:
+| Goal | What to do | Output |
+| --- | --- | --- |
+| Create a new world's terrain | Change `seed`, then run `generate` | `planet.json` |
+| Get a ready-to-use planet image | Run `all` with the sphere config | `planet.json` + `planet.png` |
+| Make a looping animation | Run `gif` on an existing planet | `planet.gif` |
+| Make a flat map or texture | Set `projection` to `flat`, then run `render` | Rectangular PNG |
+| Re-theme the same world | Change only `colormap`, then run `render` again | New art, identical terrain |
+| Make many reproducible variants | Run the CLI with different schemas or seeds | Batch-friendly deterministic assets |
+
+## Mental model
+
+```text
+generation schema (JSON)
+        │
+        ▼
+     generate ─────────────▶ planet.json
+                              heightmap data
+                                   │
+                    render config  │
+                           ┌───────┴────────┐
+                           ▼                ▼
+                      flat / sphere     spinning GIF
+                           │                │
+                           ▼                ▼
+                          PNG              GIF
+```
+
+The key idea is simple: **terrain is data; appearance is a view of that data.**
+
+## Task recipes
+
+### 1. Generate a different planet
+
+Edit `seed` in `schemas/default.gen.json`, then run:
 
 ```bash
 python main.py generate \
@@ -63,26 +137,45 @@ python main.py generate \
   --out planet.json
 ```
 
-Render the same terrain as a PNG:
+The same schema plus the same seed always produces the same terrain.
+
+### 2. Render one planet in several styles
+
+Keep `planet.json`, change only `colormap` in the render config, and render
+again:
 
 ```bash
 python main.py render \
   --data planet.json \
   --config schemas/default.render.json \
-  --out planet.png
+  --out planet-earth.png
 ```
 
-Generate and render in one step:
+Try `earth`, `ocean`, `moon`, `lava`, `icy`, or `pandora`. No terrain
+regeneration is needed.
+
+### 3. Make a game-ready flat map
+
+Use a render config like this:
+
+```json
+{
+  "colormap": "earth",
+  "projection": "flat",
+  "scale": 4
+}
+```
+
+Then render:
 
 ```bash
-python main.py all \
-  --schema schemas/default.gen.json \
-  --config schemas/default.render.json \
-  --out-data planet.json \
-  --out-png planet.png
+python main.py render \
+  --data planet.json \
+  --config flat.render.json \
+  --out planet-map.png
 ```
 
-Create a seamlessly looping spin animation:
+### 4. Export a seamless spin
 
 ```bash
 python main.py gif \
@@ -93,25 +186,26 @@ python main.py gif \
   --fps 12
 ```
 
-Both `--schema` and `--config` are optional; omitted values use built-in
-defaults.
+More frames make the motion smoother and the file larger. Rotation speed is
+`360 / frames × fps` degrees per second. Wrapped longitude is enabled by
+default, so the loop has no map seam.
 
-## Generation schema
+## Generation input
 
-The generation schema controls terrain. Every field is optional.
+Every generation field is optional:
 
 ```jsonc
 {
   "name": "default",
-  "size": [200, 100],          // [width, height]; 2:1 works best on a sphere
-  "seed": 1,                   // change the seed to create a different world
+  "size": [200, 100],          // [width, height]; 2:1 fits a sphere best
+  "seed": 1,                   // change this to create another world
   "noise": {
     "scale": 30.0,             // larger = smoother, broader features
     "octaves": 4,              // number of detail layers
-    "persistence": 0.5,        // amplitude retained by each detail layer
-    "lacunarity": 2.0,         // frequency growth per detail layer
+    "persistence": 0.5,        // amplitude retained by each layer
+    "lacunarity": 2.0,         // frequency growth per layer
     "offset": [0, 0],
-    "wrap_x": true             // join the left and right edges seamlessly
+    "wrap_x": true             // seamless left and right edges
   },
   "shaping": {
     "normalize_mode": "global", // "global", "local", or "none"
@@ -123,29 +217,26 @@ The generation schema controls terrain. Every field is optional.
 }
 ```
 
-### Normalization modes
+### Terrain tuning cheat sheet
 
-| Mode | Behavior | Best for |
-| --- | --- | --- |
-| `global` | Preserves absolute elevation relative to the theoretical noise amplitude. Palette sea levels remain meaningful. | Distinct ocean, desert, and dry worlds; recommended default |
-| `local` | Stretches each generated map from its own minimum to maximum. | Using the entire palette on every terrain |
-| `none` | Leaves the shaped noise unnormalized. | Debugging and custom pipelines |
-
-### Tuning guide
-
-| Goal | Adjustment |
+| Desired result | Change |
 | --- | --- |
-| More fine detail | Increase `octaves`; decrease `scale` |
+| Finer, busier detail | Increase `octaves`; decrease `scale` |
 | Smoother, larger landforms | Decrease `octaves`; increase `scale` |
-| Stronger elevation contrast | Increase `persistence`, for example to `0.6`–`0.7` |
+| Stronger height contrast | Increase `persistence`, for example to `0.6`–`0.7` |
 | More ocean / more land | Decrease / increase `flood` |
 | Island-shaped terrain | Set `falloff` to `true` |
 | A completely different world | Change `seed` |
 
-## Render config
+### Normalization modes
 
-Rendering is independent of generation, so one `planet.json` can produce many
-visual styles.
+| Mode | Behavior | Use it for |
+| --- | --- | --- |
+| `global` | Preserves elevation relative to the theoretical noise amplitude, so palette sea levels remain meaningful | Distinct ocean, desert, and dry worlds; recommended default |
+| `local` | Stretches each map from its own minimum to maximum | Forcing every terrain to use the full palette |
+| `none` | Leaves shaped noise unnormalized | Debugging and custom pipelines |
+
+## Render input
 
 ```jsonc
 {
@@ -155,7 +246,7 @@ visual styles.
   "radius": 256,               // globe radius in pixels
   "rotation": 0.0,             // longitude in degrees
   "shading": true,
-  "background": [0, 0, 0, 0]  // RGBA
+  "background": [0, 0, 0, 0]  // RGBA; transparent by default
 }
 ```
 
@@ -166,11 +257,11 @@ earth (terrain), moon, mars, ashy, lava, volcano, gobi, venus,
 toxic, redstone, ocean, pandora, icy, dessert, tempest, hive, grayscale
 ```
 
-Add a palette by defining another gradient in `colormaps.py`.
+Add a new palette by defining another gradient in `colormaps.py`.
 
-## Output data
+## Output contract
 
-`planet.json` is deliberately display-agnostic:
+`planet.json` is deliberately display-agnostic and easy to consume elsewhere:
 
 ```jsonc
 {
@@ -184,27 +275,26 @@ Add a palette by defining another gradient in `colormaps.py`.
 }
 ```
 
-## Project layout
+## Project map
 
-| Path | Purpose |
+| Path | Responsibility |
 | --- | --- |
 | `noise.py` | Vectorized fractal Perlin noise |
 | `shaping.py` | Normalization, flood, falloff, and directional shaping |
 | `colormaps.py` | Named planet gradients and height-to-color mapping |
-| `generate.py` | Generation schema → heightmap data |
+| `generate.py` | Generation schema → reusable heightmap data |
 | `render.py` | Heightmap data → flat map, globe, or animation frames |
 | `main.py` | Command-line interface |
-| `schemas/` | Example generation and render configs |
-| `gallery/` | Example output generated by planetgen |
+| `schemas/` | Ready-to-edit generation and render recipes |
+| `gallery/` | Images and GIFs generated by the project |
 
-## Known limitations
+## Current boundaries
 
-- Longitude wraps seamlessly, but the poles can still show pinching because the
-  source noise is sampled as an equirectangular map rather than directly on a
-  sphere.
-- The terrain uses fractal noise only; there is no dedicated crater generator
-  yet.
+- Longitude wraps seamlessly, but poles can still pinch because noise is sampled
+  as an equirectangular map rather than directly on a sphere.
+- Terrain currently uses fractal noise only; there is no dedicated crater,
+  biome, cloud, or atmosphere generator yet.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Build a world with it.
